@@ -86,7 +86,8 @@
   .role-head .chev{ font-size:11px; color:var(--amber); transition:transform .25s; flex-shrink:0; }
   .role.open > .role-head .chev{transform:rotate(180deg);}
 
-  .role-body{ max-height:0; overflow:hidden; transition:max-height .3s ease; }
+  .role-body{ display:none; }
+  .role.open > .role-body{ display:block; }
   .role-body-inner{ padding:6px 12px 10px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:6px; }
 
   /* Level 2: Scenario */
@@ -106,10 +107,11 @@
   .scenario.open .scenario-tag{background:var(--amber);}
   .scenario-title-wrap{ flex:1; min-width:0; }
   .scenario-title{ font-size:12.5px; font-weight:700; color:var(--text); }
-  .scenario-head .chev{ font-size:10px; color:var(--amber-dim); transition:transform .25s; flex-shrink:0; }
+  .scenario-head .chev{ font-size:10px; color:var(--amber-dim); transition:transform .2s; flex-shrink:0; }
   .scenario.open .chev{transform:rotate(180deg); color:var(--amber);}
 
-  .scenario-body{ max-height:0; overflow:hidden; transition:max-height .3s ease; }
+  .scenario-body{ display:none; }
+  .scenario.open > .scenario-body{ display:block; }
   .scenario-body-inner{ padding:0 10px 12px; border-top:1px solid var(--line); }
 
   /* Level 3: content */
@@ -228,16 +230,7 @@ contentEl.addEventListener('click', (e) => {
   const roleHead = e.target.closest('.role-head');
   if(roleHead){
     const role = roleHead.closest('.role');
-    const body = role.querySelector(':scope > .role-body');
-    const isOpen = role.classList.contains('open');
-    if(isOpen){
-      role.classList.remove('open');
-      body.style.maxHeight = '0px';
-    } else {
-      role.classList.add('open');
-      // account for potential future expansion of scenario height too
-      body.style.maxHeight = body.scrollHeight + 'px';
-    }
+    role.classList.toggle('open');
     return;
   }
 
@@ -245,24 +238,7 @@ contentEl.addEventListener('click', (e) => {
   const scenarioHead = e.target.closest('.scenario-head');
   if(scenarioHead){
     const scenario = scenarioHead.closest('.scenario');
-    const sBody = scenario.querySelector('.scenario-body');
-    const isOpen = scenario.classList.contains('open');
-    const role = scenario.closest('.role');
-    const roleBody = role.querySelector(':scope > .role-body');
-
-    if(isOpen){
-      scenario.classList.remove('open');
-      sBody.style.maxHeight = '0px';
-    } else {
-      scenario.classList.add('open');
-      sBody.style.maxHeight = sBody.scrollHeight + 'px';
-    }
-    // re-measure the parent role-body height after scenario toggles
-    requestAnimationFrame(() => {
-      if(role.classList.contains('open')){
-        roleBody.style.maxHeight = roleBody.scrollHeight + 'px';
-      }
-    });
+    scenario.classList.toggle('open');
     return;
   }
 });
