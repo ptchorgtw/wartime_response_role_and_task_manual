@@ -495,6 +495,19 @@ footer{
     padding:6px 14px; border-radius:4px;
   }
   .list-tools button:hover{ border-color:var(--amber-dim); }
+  /* ===== 整合版新增：修正配置圖在手機上被裁切 ===== */
+  /* 原版設定 height:100%; width:auto，寬幅平面圖在窄螢幕上會被左右裁切、
+     只能靠水平捲動才看得到全圖。改為以「完整顯示、不裁切」為優先：
+     圖片依容器等比縮放至完全顯示，容器高度隨圖片比例自動調整。 */
+  @media (max-width:700px){
+    .map-stage-fixed{
+      height:auto; max-height:none; overflow:visible;
+      padding:6px 0;
+    }
+    .map-stage-fixed img{
+      width:100%; height:auto; max-width:100%; max-height:none;
+    }
+  }
   @media print{
     .manual-tabs{ display:none !important; }
     .app-section[hidden]{ display:block; }
