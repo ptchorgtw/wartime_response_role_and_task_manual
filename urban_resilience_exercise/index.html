@@ -4,17 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="only light">
-<meta name="theme-color" content="#f4f6fa">
+<meta name="theme-color" content="#faf6f6">
 <title>屏東縣政府2026城鎮韌性演習・屏基應變模擬知識庫</title>
 <style>
-  :root{
+  :root, [data-theme="rose"]{
+    --bg:#faf6f6; --panel:#ffffff; --panel-2:#f7ecec; --line:#e6d4d4;
+    --text:#241a1a; --text-dim:#7a6262;
+    --accent:#a8434f; --accent-dim:#8f2f3a; --accent-rgb:168,67,79; --danger:#8f2f3a; --chip-text:#ffffff;
+    --tint:#fbebec; --radius:10px;
+  }
+  [data-theme="navy"]{
     --bg:#f4f6fa; --panel:#ffffff; --panel-2:#eef2f8; --line:#d8dce4;
     --text:#15171e; --text-dim:#5b6472;
     --accent:#1e3a5f; --accent-dim:#2c4d75; --accent-rgb:30,58,95; --danger:#b0402f; --chip-text:#ffffff;
     --tint:#e9f1fa; --radius:10px;
   }
+  [data-theme="mauve"]{
+    --bg:#f8f5f8; --panel:#ffffff; --panel-2:#f2e9f1; --line:#ddd0dc;
+    --text:#221a22; --text-dim:#756474;
+    --accent:#6b4062; --accent-dim:#552f4d; --accent-rgb:107,64,98; --danger:#a1382c; --chip-text:#ffffff;
+    --tint:#f3e6f2; --radius:10px;
+  }
+  [data-theme="sage"]{
+    --bg:#f5f8f5; --panel:#ffffff; --panel-2:#eaf1ea; --line:#d4e0d4;
+    --text:#182018; --text-dim:#5e6e5e;
+    --accent:#3f6b4f; --accent-dim:#2e5039; --accent-rgb:63,107,79; --danger:#a1382c; --chip-text:#ffffff;
+    --tint:#e8f2ea; --radius:10px;
+  }
   *{box-sizing:border-box;}
-  html{background:var(--bg);color-scheme:only light;}
+  html{background:var(--bg);color-scheme:only light;transition:background-color .2s;}
+  .theme-picker{display:flex;gap:8px;padding:14px 18px 0;flex-wrap:wrap;}
+  .theme-swatch{display:flex;align-items:center;gap:7px;padding:6px 12px 6px 6px;background:var(--panel);
+    border:1.5px solid var(--line);border-radius:999px;cursor:pointer;font-size:13.5px;color:var(--text-dim);font-family:inherit;}
+  .theme-swatch .dot{width:18px;height:18px;border-radius:50%;background:var(--dotcolor);flex-shrink:0;border:1px solid rgba(0,0,0,.1);}
+  .theme-swatch.active{border-color:var(--accent);color:var(--text);font-weight:700;background:var(--tint);}
   body{margin:0;background:var(--bg);color:var(--text);min-height:100vh;
     font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
     -webkit-font-smoothing:antialiased;}
@@ -36,8 +59,9 @@
     border:1.5px solid var(--line);border-radius:var(--radius);color:var(--text-dim);cursor:pointer;font-family:inherit;text-align:center;}
   .stage-tabs button .tab-main{display:block;font-size:16.5px;font-weight:900;color:var(--text);margin-bottom:4px;}
   .stage-tabs button .tab-sub{display:block;font-size:13.5px;color:var(--text-dim);line-height:1.4;}
-  .stage-tabs button.active{background:var(--tint);border-color:var(--accent);border-width:2px;}
-  .stage-tabs button.active .tab-main{color:var(--accent);}
+  .stage-tabs button.active{background:var(--accent);border-color:var(--accent);border-width:2px;}
+  .stage-tabs button.active .tab-main{color:#ffffff;}
+  .stage-tabs button.active .tab-sub{color:rgba(255,255,255,.82);}
 
   .stage-desc{margin:0 18px 14px;padding:16px 16px;background:var(--panel);
     border:1.5px dashed var(--accent-dim);border-radius:var(--radius);}
@@ -47,9 +71,16 @@
   .stage-desc .official-source{font-size:13.5px;color:var(--text-dim);}
 
   .search-bar{padding:0 18px 10px;}
-  .search-bar input{width:100%;padding:11px 13px;background:var(--panel);border:1px solid var(--line);
+  .search-wrap{position:relative;}
+  .search-wrap input{width:100%;padding:11px 40px 11px 13px;background:var(--panel);border:1px solid var(--line);
     border-radius:var(--radius);color:var(--text);font-size:17.5px;font-family:inherit;}
-  .search-bar input:focus{outline:none;border-color:var(--accent-dim);}
+  .search-wrap input:focus{outline:none;border-color:var(--accent-dim);}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    width:26px;height:26px;border:none;border-radius:50%;background:var(--line);color:var(--text-dim);
+    font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .search-clear:hover{background:var(--accent-dim);color:#fff;}
+  .search-meta{margin-top:8px;font-size:14px;color:var(--accent-dim);font-weight:700;}
+  mark.hl{background:#ffe58a;color:inherit;padding:0 1px;border-radius:2px;}
 
   .scenario-picker{padding:0 18px 16px;}
   .scenario-picker label{display:block;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.03em;margin-bottom:5px;}
@@ -65,11 +96,12 @@
   .scenario-banner .desc{font-size:16px;color:var(--text-dim);line-height:1.65;}
 
   .cat-head{font-size:16.5px;font-weight:900;color:var(--accent);margin:18px 0 8px;
-    padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;cursor:pointer;user-select:none;}
-  .cat-head .count{color:var(--text-dim);font-weight:400;}
+    padding-bottom:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;cursor:pointer;user-select:none;}
+  .cat-head .cat-name{text-align:left;}
+  .cat-head .count{color:var(--text-dim);font-weight:400;flex-shrink:0;padding-left:10px;}
   .cat.collapsed .roles{display:none;}
-  .cat-head::before{content:"▾ ";color:var(--accent);}
-  .cat.collapsed .cat-head::before{content:"▸ ";}
+  .cat-head .cat-name::before{content:"▾ ";color:var(--accent);}
+  .cat.collapsed .cat-head .cat-name::before{content:"▸ ";}
 
   .roles{display:flex;flex-direction:column;gap:8px;}
 
@@ -109,6 +141,10 @@
   .answer ul{margin:0 0 8px;padding-left:20px;}
   .answer li{margin-bottom:4px;}
 
+  .expand-all-row{padding:0 18px 8px;display:flex;justify-content:flex-end;}
+  #expandAllBtn{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;
+    font-size:14px;color:var(--accent-dim);cursor:pointer;font-family:inherit;font-weight:700;}
+  #expandAllBtn:hover{background:var(--tint);border-color:var(--accent-dim);}
   .no-match{padding:40px 18px;text-align:center;color:var(--text-dim);font-size:16.5px;display:none;}
   .footer-note{padding:20px 18px 0;font-size:13.5px;color:var(--text-dim);line-height:1.7;border-top:1px solid var(--line);margin-top:20px;}
 </style>
@@ -121,6 +157,8 @@
     <p>屏東基督教醫院大連院區・五階段狀況應處模擬答案彙整。可依「角色」瀏覽跨階段任務，或依「想定」檢視單一狀況之全部參演／支援單位作為。</p>
   </header>
 
+  <div class="theme-picker" id="themePicker"></div>
+
   <div class="stats">
     <div class="stat"><b>5</b><span>應處階段</span></div>
     <div class="stat"><b>74</b><span>狀況編號</span></div>
@@ -131,13 +169,20 @@
   <div class="stage-tabs" id="stageTabs"></div>
   <div class="stage-desc" id="stageDesc"></div>
 
-  <div class="search-bar"><input type="text" id="searchInput" placeholder="搜尋角色、狀況編號、關鍵字…"></div>
+  <div class="search-bar">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="搜尋角色、狀況編號、關鍵字（跨全部5階段）…">
+      <button type="button" id="searchClear" class="search-clear" style="display:none" aria-label="清除搜尋">×</button>
+    </div>
+    <div class="search-meta" id="searchMeta"></div>
+  </div>
 
-  <div class="scenario-picker">
+  <div class="scenario-picker" id="scenarioPicker">
     <label for="scenarioSelect">本階段內檢視方式（留空＝依角色瀏覽本階段所有狀況；或選擇單一狀況編號檢視）</label>
     <select id="scenarioSelect"><option value="">－ 依角色瀏覽本階段所有狀況 －</option></select>
   </div>
 
+  <div class="expand-all-row"><button type="button" id="expandAllBtn">全部展開</button></div>
   <div id="content"></div>
   <div class="no-match" id="noMatch">找不到符合的角色或狀況，請調整搜尋關鍵字。</div>
 
@@ -157,6 +202,10 @@ const contentEl = document.getElementById('content');
 
 const noMatchEl = document.getElementById('noMatch');
 const searchInput = document.getElementById('searchInput');
+const searchClearEl = document.getElementById('searchClear');
+const searchMetaEl = document.getElementById('searchMeta');
+const scenarioPickerEl = document.getElementById('scenarioPicker');
+const expandAllBtn = document.getElementById('expandAllBtn');
 
 const STAGE_SHORT = {
   '1': ['階段一', '狀況應處'],
@@ -187,6 +236,9 @@ function renderStageTabs(){
     btn.addEventListener('click', ()=>{
       currentStage = k;
       currentScenario = '';
+      searchQuery = '';
+      searchInput.value = '';
+      searchClearEl.style.display = 'none';
       renderAll();
     });
     stageTabsEl.appendChild(btn);
@@ -220,6 +272,19 @@ function highlightMatch(text, q){
 
 }
 
+function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function highlightText(text, q){
+  if(!q || !text) return text;
+  const re = new RegExp('('+escapeRegex(q)+')', 'ig');
+  return String(text).replace(re, '<mark class="hl">$1</mark>');
+}
+
+function highlightHtml(html, q){
+  if(!q || !html) return html;
+  return html.split(/(<[^>]+>)/g).map(seg => seg.startsWith('<') ? seg : highlightText(seg, q)).join('');
+}
+
 function matchesSearch(role, entry, catName){
   if(!searchQuery) return true;
   const hay = (catName+' '+role+' '+entry.scenario_id+' '+entry.scenario_title+' '+entry.summary+' '+entry.detail+' '+entry.html).toLowerCase();
@@ -241,15 +306,18 @@ function contactBoxHtml(role){
   </div>`;
 }
 
-function entryHtml(entry, showScenarioTag){
-  const tag = showScenarioTag ? `<span class="entry-tag">狀況${entry.scenario_id}</span>` : '';
+function entryHtml(entry, opts){
+  opts = opts || {};
+  const q = opts.query || '';
+  const tagText = opts.showStageTag ? `階段${entry.stage}・狀況${entry.scenario_id}` : (opts.showScenarioTag ? `狀況${entry.scenario_id}` : '');
+  const tag = tagText ? `<span class="entry-tag">${tagText}</span>` : '';
   const dt = entry.datetime ? `<span class="entry-dt">${entry.datetime}</span>` : '';
-  const summary = entry.summary ? `<div class="entry-summary">${entry.summary}</div>` : '';
-  const detail = entry.detail ? `<div class="entry-detail">▸ ${entry.detail}</div>` : '';
+  const summary = entry.summary ? `<div class="entry-summary">${highlightText(entry.summary, q)}</div>` : '';
+  const detail = entry.detail ? `<div class="entry-detail">▸ ${highlightText(entry.detail, q)}</div>` : '';
   return `<div class="entry">
-    <div class="entry-head">${tag}<span class="entry-title">${entry.scenario_title}</span>${dt}</div>
+    <div class="entry-head">${tag}<span class="entry-title">${highlightText(entry.scenario_title, q)}</span>${dt}</div>
     ${summary}${detail}
-    <div class="answer">${entry.html}</div>
+    <div class="answer">${highlightHtml(entry.html, q)}</div>
   </div>`;
 }
 
@@ -259,14 +327,12 @@ function renderByRole(){
   DATA.categories.forEach(cat=>{
     const roles = cat.roles
       .map(r=>({role:r.role, entries: r.entries.filter(e=>String(e.stage)===String(currentStage))}))
-      .filter(r=>r.entries.length>0)
-      .map(r=>({role:r.role, entries: r.entries.filter(e=>matchesSearch(r.role,e,cat.name))}))
       .filter(r=>r.entries.length>0);
     if(roles.length===0) return;
     anyMatch = true;
     const catDiv = document.createElement('div');
-    catDiv.className = 'cat';
-    catDiv.innerHTML = `<div class="cat-head"><span>${cat.name}</span><span class="count">${roles.length} 個角色</span></div>`;
+    catDiv.className = 'cat collapsed';
+    catDiv.innerHTML = `<div class="cat-head"><span class="cat-name">${cat.name}</span><span class="count">${roles.length} 個角色</span></div>`;
     const rolesDiv = document.createElement('div');
     rolesDiv.className = 'roles';
     roles.forEach(r=>{
@@ -274,7 +340,7 @@ function renderByRole(){
       roleDiv.className = 'role';
       const entriesHtml = r.entries
         .sort((a,b)=>a.scenario_id.localeCompare(b.scenario_id,'zh-Hant-u-kn-true'))
-        .map(e=>entryHtml(e, true)).join('');
+        .map(e=>entryHtml(e, {showScenarioTag:true})).join('');
       roleDiv.innerHTML = `
         <button class="role-head">
           <span class="role-name-wrap"><span class="role-name">${r.role}</span></span>
@@ -310,20 +376,18 @@ function renderByScenario(){
   DATA.categories.forEach(cat=>{
     const roles = cat.roles
       .map(r=>({role:r.role, entries: r.entries.filter(e=>String(e.stage)===String(currentStage) && e.scenario_id===currentScenario)}))
-      .filter(r=>r.entries.length>0)
-      .map(r=>({role:r.role, entries: r.entries.filter(e=>matchesSearch(r.role,e,cat.name))}))
       .filter(r=>r.entries.length>0);
     if(roles.length===0) return;
     anyMatch = true;
     const catDiv = document.createElement('div');
-    catDiv.className = 'cat';
-    catDiv.innerHTML = `<div class="cat-head"><span>${cat.name}</span><span class="count">${roles.length} 個角色</span></div>`;
+    catDiv.className = 'cat collapsed';
+    catDiv.innerHTML = `<div class="cat-head"><span class="cat-name">${cat.name}</span><span class="count">${roles.length} 個角色</span></div>`;
     const rolesDiv = document.createElement('div');
     rolesDiv.className = 'roles';
     roles.forEach(r=>{
       const roleDiv = document.createElement('div');
-      roleDiv.className = 'role open';
-      const entriesHtml = r.entries.map(e=>entryHtml(e, false)).join('');
+      roleDiv.className = 'role';
+      const entriesHtml = r.entries.map(e=>entryHtml(e, {showScenarioTag:false})).join('');
       roleDiv.innerHTML = `
         <button class="role-head">
           <span class="role-name-wrap"><span class="role-name">${r.role}</span></span>
@@ -342,12 +406,78 @@ function renderByScenario(){
   noMatchEl.style.display = anyMatch ? 'none' : 'block';
 }
 
+function renderSearchResults(){
+  contentEl.innerHTML = '';
+  const q = searchQuery;
+  let anyMatch = false;
+  let totalEntries = 0;
+  let totalRoles = 0;
+  const stagesHit = new Set();
+  DATA.categories.forEach(cat=>{
+    const roles = cat.roles
+      .map(r=>({role:r.role, entries: r.entries.filter(e=>matchesSearch(r.role,e,cat.name))}))
+      .filter(r=>r.entries.length>0);
+    if(roles.length===0) return;
+    anyMatch = true;
+    totalRoles += roles.length;
+    const catDiv = document.createElement('div');
+    catDiv.className = 'cat collapsed';
+    catDiv.innerHTML = `<div class="cat-head"><span class="cat-name">${highlightText(cat.name,q)}</span><span class="count">${roles.length} 個角色</span></div>`;
+    const rolesDiv = document.createElement('div');
+    rolesDiv.className = 'roles';
+    roles.forEach(r=>{
+      totalEntries += r.entries.length;
+      r.entries.forEach(e=>stagesHit.add(e.stage));
+      const roleDiv = document.createElement('div');
+      roleDiv.className = 'role';
+      const entriesHtml = r.entries
+        .sort((a,b)=> Number(a.stage)-Number(b.stage) || a.scenario_id.localeCompare(b.scenario_id,'zh-Hant-u-kn-true'))
+        .map(e=>entryHtml(e, {showStageTag:true, query:q})).join('');
+      roleDiv.innerHTML = `
+        <button class="role-head">
+          <span class="role-name-wrap"><span class="role-name">${highlightText(r.role,q)}</span></span>
+          <span class="role-count">${r.entries.length}</span>
+          <span class="chev">▾</span>
+        </button>
+        <div class="role-body"><div class="role-body-inner">${contactBoxHtml(r.role)}${entriesHtml}</div></div>`;
+      rolesDiv.appendChild(roleDiv);
+    });
+    catDiv.appendChild(rolesDiv);
+    contentEl.appendChild(catDiv);
+    catDiv.querySelector('.cat-head').addEventListener('click', ()=> catDiv.classList.toggle('collapsed'));
+  });
+  contentEl.querySelectorAll('.role-head').forEach(btn=>{
+    btn.addEventListener('click', ()=> btn.closest('.role').classList.toggle('open'));
+  });
+  noMatchEl.style.display = anyMatch ? 'none' : 'block';
+  searchMetaEl.textContent = anyMatch
+    ? `找到 ${totalEntries} 筆符合結果，共 ${totalRoles} 個角色、分布於 ${stagesHit.size} 個階段（可點擊下方項目查看，或改用階段頁籤離開搜尋）`
+    : '';
+}
+
 function renderAll(){
   renderStageTabs();
-  renderStageDesc();
-  renderScenarioSelect();
-  if(currentScenario){ renderByScenario(); } else { renderByRole(); }
+  if(searchQuery){
+    stageDescEl.style.display = 'none';
+    scenarioPickerEl.style.display = 'none';
+    renderSearchResults();
+  } else {
+    stageDescEl.style.display = '';
+    scenarioPickerEl.style.display = '';
+    renderStageDesc();
+    renderScenarioSelect();
+    searchMetaEl.textContent = '';
+    if(currentScenario){ renderByScenario(); } else { renderByRole(); }
+  }
+  expandAllBtn.textContent = '全部展開';
 }
+
+expandAllBtn.addEventListener('click', ()=>{
+  const cats = document.querySelectorAll('.cat');
+  const anyCollapsed = Array.from(cats).some(c=>c.classList.contains('collapsed'));
+  cats.forEach(c=> c.classList.toggle('collapsed', !anyCollapsed));
+  expandAllBtn.textContent = anyCollapsed ? '全部收合' : '全部展開';
+});
 
 scenarioSelectEl.addEventListener('change', ()=>{
   currentScenario = scenarioSelectEl.value;
@@ -356,8 +486,44 @@ scenarioSelectEl.addEventListener('change', ()=>{
 
 searchInput.addEventListener('input', ()=>{
   searchQuery = searchInput.value.trim().toLowerCase();
-  if(currentScenario){ renderByScenario(); } else { renderByRole(); }
+  searchClearEl.style.display = searchQuery ? 'flex' : 'none';
+  renderAll();
 });
+
+searchClearEl.addEventListener('click', ()=>{
+  searchInput.value = '';
+  searchQuery = '';
+  searchClearEl.style.display = 'none';
+  renderAll();
+  searchInput.focus();
+});
+
+const THEMES = [
+  {id:'navy',  label:'海軍藍', dot:'#1e3a5f'},
+  {id:'rose',  label:'淡紅／珊瑚',     dot:'#a8434f'},
+  {id:'mauve', label:'藕紫',          dot:'#6b4062'},
+  {id:'sage',  label:'抹茶綠',        dot:'#3f6b4f'},
+];
+const themePickerEl = document.getElementById('themePicker');
+let currentTheme = 'rose';
+
+function renderThemePicker(){
+  themePickerEl.innerHTML = '';
+  THEMES.forEach(t=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'theme-swatch' + (t.id===currentTheme ? ' active' : '');
+    btn.style.setProperty('--dotcolor', t.dot);
+    btn.innerHTML = `<span class="dot"></span>${t.label}`;
+    btn.addEventListener('click', ()=>{
+      currentTheme = t.id;
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      renderThemePicker();
+    });
+    themePickerEl.appendChild(btn);
+  });
+}
+renderThemePicker();
 
 renderAll();
 </script>
