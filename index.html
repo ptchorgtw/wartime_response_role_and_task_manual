@@ -2,20 +2,30 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>屏基大連院區・應變任務整合手冊（想定一～三）</title>
 <style>
   :root{
-    --bg: #faf9f5;
+    color-scheme: only light;
+    /* 淡紅／珊瑚（現行預設，依版面設計規格 MD） */
+    --bg: #faf6f6;
     --panel: #ffffff;
-    --panel-2: #f2f0e7;
-    --line: #d9d5c5;
-    --text: #201f18;
-    --text-dim: #66655a;
-    --amber: #8a5a00;
-    --amber-dim: #9c6a1f;
-    --red: #a1382c;
+    --panel-2: #f7ecec;
+    --line: #e6d4d4;
+    --text: #241a1a;
+    --text-dim: #7a6262;
+    --accent: #a8434f;
+    --accent-dim: #8f2f3a;
+    --accent-rgb: 168,67,79;
+    --danger: #8f2f3a;
+    --tint: #fbebec;
     --chip-text: #ffffff;
+    --radius: 10px;
+    /* 相容別名：手冊既有樣式沿用 */
+    --amber: #a8434f;
+    --amber-dim: #8f2f3a;
+    --red: #8f2f3a;
   }
   *{box-sizing:border-box;}
   body{
@@ -514,6 +524,76 @@ footer{
     .cat.collapsed .roles{ display:flex; }
     .list-tools{ display:none !important; }
   }
+
+  /* === 配色版本切換器：主題覆寫（預設 :root 為淡紅／珊瑚） === */
+  html[data-theme="navy"]{
+    --bg:#f6f8fb; --panel:#ffffff; --panel-2:#eef2f8; --line:#d3dce8;
+    --text:#1a2230; --text-dim:#5d6b80;
+    --accent:#26436b; --accent-dim:#1c3350; --accent-rgb:38,67,107;
+    --danger:#a1382c; --tint:#e9f0fa; --chip-text:#ffffff;
+    --amber:#26436b; --amber-dim:#1c3350; --red:#a1382c;
+  }
+  html[data-theme="mauve"]{
+    --bg:#faf7fa; --panel:#ffffff; --panel-2:#f1eaf0; --line:#ddccdb;
+    --text:#241e26; --text-dim:#675d6a;
+    --accent:#7a5570; --accent-dim:#5f4257; --accent-rgb:122,85,112;
+    --danger:#9c3f5f; --tint:#f2e9f0; --chip-text:#ffffff;
+    --amber:#7a5570; --amber-dim:#5f4257; --red:#9c3f5f;
+  }
+  html[data-theme="matcha"]{
+    --bg:#f7faf5; --panel:#ffffff; --panel-2:#e9f0e4; --line:#cfdcc5;
+    --text:#1e241b; --text-dim:#5b6555;
+    --accent:#4c6a39; --accent-dim:#3a5329; --accent-rgb:76,106,57;
+    --danger:#8f4a2c; --tint:#ecf3e6; --chip-text:#ffffff;
+    --amber:#4c6a39; --amber-dim:#3a5329; --red:#8f4a2c;
+  }
+  /* === 配色器 UI（膠囊） === */
+  .theme-switcher{padding:14px 18px 2px;}
+  .theme-grid{display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
+  .theme-btn{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+    background:var(--panel);border:1.5px solid var(--line);border-radius:999px;
+    padding:7px 16px 7px 12px;font-family:inherit;color:var(--text);
+    font-size:15px;font-weight:700;line-height:1;white-space:nowrap;
+    transition:border-color .15s,box-shadow .15s;}
+  .theme-btn:hover{border-color:var(--dot);}
+  .theme-btn.active{border-color:var(--dot);box-shadow:inset 0 0 0 1px var(--dot);}
+  .theme-btn .dot{width:17px;height:17px;border-radius:50%;background:var(--dot);
+    border:1px solid rgba(0,0,0,.15);flex:0 0 auto;}
+  @media print{.theme-switcher{display:none;}}
+
+  /* === MD 規格：圓角（--radius:10px；徽章 6px） === */
+  .search-bar input, .scenario-picker select, .role, .scenario,
+  .reminder-box, .scenario-banner, details.hospital-overview,
+  details.exec-summary, details.hics-directory, .contact-box, .opt-box,
+  .official-bg, .stats, .decision-table, .no-match{ border-radius:var(--radius); }
+  .stats{ overflow:hidden; }
+  .scenario-tag, .scenario-banner .tag, .gap-badge{ border-radius:6px; }
+  mark{ background:#ffe58a; border-radius:3px; }
+
+  /* === MD 規格：字級節奏 === */
+  h1{ font-size:25.5px; line-height:1.4; }
+  .eyebrow{ font-size:16.5px; }
+  header p{ font-size:17px; }
+  .manual-tabs button{ font-size:16.5px; }
+  .manual-tabs button .tab-sub{ font-size:13.5px; }
+  .search-bar input{ font-size:17.5px; }
+  .scenario-picker label{ font-size:15px; }
+  .scenario-picker select{ font-size:16.5px; }
+  .cat-head{ font-size:16.5px; }
+  .role-name{ font-size:18px; }
+  .role-count{ font-size:15px; }
+  .scenario-title{ font-size:17px; }
+  .scenario-banner .title{ font-size:18.5px; }
+  .scenario-banner .desc{ font-size:16px; }
+  .scenario-desc{ font-size:16px; }
+  .answer{ font-size:17px; line-height:1.75; }
+  .contact-title{ font-size:16.5px; }
+  .contact-grid dt{ font-size:15px; }
+  .contact-grid dd{ font-size:15.5px; }
+  .source-note{ font-size:13.5px; }
+  .stat span{ font-size:15px; }
+  footer{ font-size:13.5px; }
+  .no-match{ font-size:16.5px; }
 </style>
 </head>
 <body>
@@ -524,6 +604,15 @@ footer{
     <h1>應變任務整合手冊</h1>
     <p id="manualDesc"></p>
   </header>
+  <div class="theme-switcher" id="themeSwitcher">
+    <div class="theme-grid">
+      <button type="button" class="theme-btn" data-set-theme="coral" style="--dot:#a8434f"><span class="dot"></span>淡紅／珊瑚</button>
+      <button type="button" class="theme-btn" data-set-theme="navy" style="--dot:#26436b"><span class="dot"></span>海軍藍</button>
+      <button type="button" class="theme-btn" data-set-theme="mauve" style="--dot:#7a5570"><span class="dot"></span>藕紫</button>
+      <button type="button" class="theme-btn" data-set-theme="matcha" style="--dot:#4c6a39"><span class="dot"></span>抹茶綠</button>
+    </div>
+  </div>
+
 
   <div class="manual-tabs">
     <button type="button" data-stage="1" class="active">想定一｜D日<span class="tab-sub">降載與HICS啟動（特1-1~5・演1-1~9）</span></button>
@@ -1439,6 +1528,29 @@ switchStage(1);
   }, {passive:true});
 })();
 
+</script>
+
+<script>
+(function(){
+  var KEY='ptch_manual_theme';
+  var sw=document.getElementById('themeSwitcher');
+  if(!sw) return;
+  function apply(name){
+    if(name && name!=='coral'){ document.documentElement.setAttribute('data-theme',name); }
+    else { document.documentElement.removeAttribute('data-theme'); name='coral'; }
+    sw.querySelectorAll('.theme-btn').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-set-theme')===name);
+    });
+    try{ localStorage.setItem(KEY,name); }catch(e){}
+  }
+  sw.addEventListener('click',function(e){
+    var b=e.target.closest('[data-set-theme]');
+    if(b) apply(b.getAttribute('data-set-theme'));
+  });
+  var saved='coral';
+  try{ saved=localStorage.getItem(KEY)||'coral'; }catch(e){}
+  apply(saved);
+})();
 </script>
 </body>
 </html>
